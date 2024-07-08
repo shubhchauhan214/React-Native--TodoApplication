@@ -7,6 +7,9 @@ export const s = StyleSheet.create({
         padding: 15,
 
     },
+    cardItem: {
+        marginBottom: 15,
+    },
     header: {
         flex: 1,
     },
@@ -15,5 +18,6 @@ export const s = StyleSheet.create({
     },
     footer: {
         height: 70,
+        backgroundColor:"white",
     },
 });

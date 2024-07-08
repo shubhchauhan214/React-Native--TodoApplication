@@ -1,10 +1,41 @@
-import { Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 /* import App.style.js file here */
 import { s } from "./App.style";
-/* import Header component */
+/* import Header component  for header functioning*/
 import { Header } from "./components/Header/Header";
+/* import CardTodo component for body functioning*/
+import { CardTodo } from "./components/CardTodo/CardTodo";
+import { useState } from "react";
+
+
 export default function App(){
+  const [todoList, setTodoList] = useState([
+      { id: 1, title: "Walk the dog", isCompleted: true},
+      { id: 2, title: "Go to the dentist", isCompleted: false},
+      { id: 3, title: "Learn React native", isCompleted: false},
+      { id: 4, title: "Walk the dog", isCompleted: true},
+      { id: 5, title: "Go to the dentist", isCompleted: false},
+      { id: 6, title: "Learn React native", isCompleted: false},
+      { id: 7, title: "Walk the dog", isCompleted: true},
+      { id: 8, title: "Go to the dentist", isCompleted: false},
+      { id: 9, title: "Learn React native", isCompleted: false},
+  ]);
+
+  function renderTodoList(){
+    return todoList.map((todo) =>(
+      <View key={todo.id} style={s.cardItem}>
+         <CardTodo onPress={updateTodo} todo={todo}/>
+      </View>
+    ));
+  }
+  function updateTodo(todo){
+    const updatedTodo = {...todo, isCompleted: !todo.isCompleted,};
+    const updatedTodoList = [...todoList];
+    const indexToUpdate = updatedTodoList.findIndex((t) => t.id === updatedTodo.id);
+    updatedTodoList[indexToUpdate] = updatedTodo;
+    setTodoList(updatedTodoList);
+  }
   return(
     <>
       <SafeAreaProvider>
@@ -13,7 +44,9 @@ export default function App(){
             <Header />
           </View>
           <View style={s.body}>
-            <Text>Body</Text>
+            <ScrollView>
+            {renderTodoList()}
+            </ScrollView>
           </View>
         </SafeAreaView>
       </SafeAreaProvider>
