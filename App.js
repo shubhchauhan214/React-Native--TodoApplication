@@ -6,6 +6,8 @@ import { s } from "./App.style";
 import { Header } from "./components/Header/Header";
 /* import CardTodo component for body functioning*/
 import { CardTodo } from "./components/CardTodo/CardTodo";
+/* import TableBottomMenu component for footer functioning*/
+import { TableBottomMenu } from "./components/TableBottomMenu/TableBottomMenu";
 import { useState } from "react";
 
 
@@ -22,13 +24,27 @@ export default function App(){
       { id: 9, title: "Learn React native", isCompleted: false},
   ]);
 
+  const [selectedTabName, setSelectedTabName] = useState("all");
+
+  function getFilteredList(){
+    switch (selectedTabName){
+      case "all":
+        return todoList
+      case "inProgress":
+        return todoList.filter((todo) => todo.isCompleted===false) /*~return todoList.filter((todo) => !todo.isCompleted);*/
+      case "done":
+        return todoList.filter((todo) => todo.isCompleted===true) /*~return todoList.filter((todo) => todo.isCompleted);*/
+    }
+  }
+
   function renderTodoList(){
-    return todoList.map((todo) =>(
+    return getFilteredList().map((todo) =>(
       <View key={todo.id} style={s.cardItem}>
          <CardTodo onPress={updateTodo} todo={todo}/>
       </View>
     ));
   }
+  /* ye function todo k status ko update krne k liye likha gya h */
   function updateTodo(todo){
     const updatedTodo = {...todo, isCompleted: !todo.isCompleted,};
     const updatedTodoList = [...todoList];
@@ -51,7 +67,11 @@ export default function App(){
         </SafeAreaView>
       </SafeAreaProvider>
       <View style={s.footer}>
-        <Text>Footer</Text>
+        <TableBottomMenu
+           todoList = {todoList}
+           onPress={setSelectedTabName} 
+           selectedTabName={selectedTabName}
+          />
       </View>
     </>
   );
