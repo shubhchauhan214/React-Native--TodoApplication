@@ -10,11 +10,13 @@ import { CardTodo } from "./components/CardTodo/CardTodo";
 import { TableBottomMenu } from "./components/TableBottomMenu/TableBottomMenu";
 /* import buttonAdd component for addition of todo */
 import { ButtonAdd } from "./components/ButtonAdd/ButtonAdd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 /* import a dialog box in which we write a new todo*/
 import Dialog from "react-native-dialog";
 /* import for uuid*/
 import uuid from "react-native-uuid";
+/* import for async-storage*/
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 export default function App(){
@@ -22,6 +24,38 @@ export default function App(){
   const [selectedTabName, setSelectedTabName] = useState("all");
   const [isAddDialogDisplayed, setIsAddDialogDisplayed] = useState(false);
   const [inputValue, setInputValue] = useState("");
+
+  useEffect(()=>{
+    loadTodoList();
+  },[]);
+
+
+  useEffect(()=>{
+    saveTodoList();
+  },[todoList]);
+
+  /* for async-storage we will add two functions first to load the data and second one is to store the data*/
+  /* This is the link from where we can use async-storage https://docs.expo.dev/versions/latest/sdk/async-storage/ */
+  /* This is the link from where we can learn how to use async storage.https://react-native-async-storage.github.io/async-storage/docs/usage/ */
+  async function loadTodoList(){
+    console.log("LOAD");
+    try{
+      const todoListString = await AsyncStorage.getItem("@todoList");
+      const parsedTodoList = JSON.parse(todoListString);
+      setTodoList(parsedTodoList || []);
+    }catch(err) {
+      alert(err);
+    }
+  }
+  async function saveTodoList(){
+    console.log("SAVE");
+    try{
+      await AsyncStorage.setItem("@todoList", JSON.stringify(todoList));
+
+    }catch(err){
+      alert(err);
+    }
+  }
 
   /* is function se hm all,inprogress or done vale coulmns me separately dekh skte h */
   function getFilteredList(){
@@ -56,7 +90,7 @@ export default function App(){
   }
   /* ye function todo k status ko update krne k liye likha gya h */
   function updateTodo(todo){
-    const updatedTodo = {...todo, isCompleted: !todo.isCompleted,};
+    const updatedTodo = {...todo, isCompleted: !todo.isCompleted};
     const updatedTodoList = [...todoList];
     const indexToUpdate = updatedTodoList.findIndex((t) => t.id === updatedTodo.id);
     updatedTodoList[indexToUpdate] = updatedTodo;
@@ -66,7 +100,7 @@ export default function App(){
 /*https://www.npmjs.com/package/react-native-uuid where we have to install library npm i react-native-uuid */
   function addTodo(){
     const newTodo = {
-      id: "uuid.v4()",
+      id: uuid.v4(),
       title: inputValue,
       isCompleted: false,
     };
@@ -90,7 +124,7 @@ export default function App(){
       <Dialog.Button disabled={inputValue.length ===0} label="Save" onPress={addTodo} />
     </Dialog.Container>
 
-    )
+    );
   }
 
   return(
