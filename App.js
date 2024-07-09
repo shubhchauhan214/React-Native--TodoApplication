@@ -10,7 +10,7 @@ import { CardTodo } from "./components/CardTodo/CardTodo";
 import { TableBottomMenu } from "./components/TableBottomMenu/TableBottomMenu";
 /* import buttonAdd component for addition of todo */
 import { ButtonAdd } from "./components/ButtonAdd/ButtonAdd";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 /* import a dialog box in which we write a new todo*/
 import Dialog from "react-native-dialog";
 /* import for uuid*/
@@ -24,6 +24,7 @@ export default function App(){
   const [selectedTabName, setSelectedTabName] = useState("all");
   const [isAddDialogDisplayed, setIsAddDialogDisplayed] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const ScrollViewRef = useRef();
 
   useEffect(()=>{
     loadTodoList();
@@ -107,6 +108,9 @@ export default function App(){
     setTodoList([...todoList, newTodo]);
     setIsAddDialogDisplayed(false);
     setInputValue("");
+    setTimeout(() =>{
+      ScrollViewRef.current.scrollToEnd();
+    }, 300);
 
   }
 
@@ -135,7 +139,7 @@ export default function App(){
             <Header />
           </View>
           <View style={s.body}>
-            <ScrollView>
+            <ScrollView ref={ScrollViewRef}>
             {renderTodoList()}
             </ScrollView>
           </View>
